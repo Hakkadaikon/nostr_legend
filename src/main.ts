@@ -20,7 +20,7 @@ renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 const scene = new THREE.Scene();
 scene.fog = new THREE.FogExp2(0x02010a, 0.012);
 const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
-camera.position.set(0, 5, 45);
+camera.position.set(0, 0, 75);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.autoRotate = !reduce;
@@ -226,7 +226,7 @@ renderer.setAnimationLoop(() => {
     const big = i === hover || i === sel ? 1.9 : 1;
     s.setScalar(nodeSize(days[i].events.length) * big * (1 + 0.15 * Math.sin(t * 3 + i * 0.7)));
     nodes.setMatrixAt(i, m4.compose(pos[i], q, s));
-    halo.setMatrixAt(i, m4.compose(pos[i], q, s.multiplyScalar(2.2)));
+    halo.setMatrixAt(i, m4.compose(pos[i], q, s.multiplyScalar(1.6)));
   }
   nodes.instanceMatrix.needsUpdate = halo.instanceMatrix.needsUpdate = true;
 

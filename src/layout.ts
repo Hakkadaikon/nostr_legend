@@ -1,8 +1,8 @@
 import type { Day } from "./types";
 
 export const RADIUS = 12;
-const TURNS_PER_YEAR = 6;
-const HEIGHT = 40;
+const TURNS_PER_YEAR = 12; // roughly one turn per month
+const HEIGHT = 90;
 
 export function helixPosition(index: number, total: number) {
   const t = total > 1 ? index / (total - 1) : 0;
@@ -31,4 +31,4 @@ export function matchDay(day: Day, query: string) {
 export const stepIndex = (cur: number, delta: number, total: number) =>
   cur < 0 ? 0 : (((cur + delta) % total) + total) % total;
 
-export const nodeSize = (count: number) => 0.25 + Math.min(count, 10) * 0.08;
+export const nodeSize = (count: number) => 0.2 + Math.min(count, 10) * 0.05;

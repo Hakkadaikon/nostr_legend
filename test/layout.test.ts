@@ -64,3 +64,14 @@ describe("nodeSize", () => {
     expect(nodeSize(100)).toBe(nodeSize(50));
   });
 });
+
+describe("density", () => {
+  it("keeps neighbouring nodes of a full year from overlapping", () => {
+    const total = 365;
+    for (let i = 1; i < total; i++) {
+      const a = helixPosition(i - 1, total), b = helixPosition(i, total);
+      const d = Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z);
+      expect(d).toBeGreaterThan(2 * nodeSize(10));
+    }
+  });
+});
