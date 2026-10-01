@@ -5,7 +5,7 @@ import { helixPosition, matchDay, monthGroups, nearestIndex, nodeSize, RADIUS, s
 import { parseTimeline } from "./timeline";
 import "./style.css";
 
-const { title, days } = parseTimeline(raw);
+const { title, name = "LEGEND", days } = parseTimeline(raw);
 const N = days.length;
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const speed = reduce ? 0.15 : 1;
@@ -50,7 +50,7 @@ const helix = new THREE.Mesh(
 );
 scene.add(helix);
 
-// --- center LEGEND + aura ---
+// --- center name + aura ---
 function glowTexture(stops: [number, string][]) {
   const c = Object.assign(document.createElement("canvas"), { width: 128, height: 128 });
   const g = c.getContext("2d")!;
@@ -60,21 +60,21 @@ function glowTexture(stops: [number, string][]) {
   g.fillRect(0, 0, 128, 128);
   return new THREE.CanvasTexture(c);
 }
-const hero$1 = Object.assign(document.createElement("canvas"), { width: 512, height: 256 });
-const uc = hero$1.getContext("2d")!;
-uc.font = "900 180px Impact, sans-serif";
-uc.textAlign = "center";
-uc.textBaseline = "middle";
-uc.fillStyle = "#fff";
-uc.fillText("LEGEND", 256, 135);
-const hero$1 = new THREE.CanvasTexture(hero$1);
+const heroCanvas = Object.assign(document.createElement("canvas"), { width: 512, height: 256 });
+const hc = heroCanvas.getContext("2d")!;
+hc.font = "900 180px Impact, sans-serif";
+hc.textAlign = "center";
+hc.textBaseline = "middle";
+hc.fillStyle = "#fff";
+hc.fillText(name, 256, 135, 490); // maxWidth squeezes long names into the plane
+const heroTex = new THREE.CanvasTexture(heroCanvas);
 const hero = new THREE.Group();
 // ponytail: stacked planes fake extrusion; TextGeometry needs a font asset not shipped with three
 for (let k = 0; k < 14; k++) {
   const m = new THREE.Mesh(
     new THREE.PlaneGeometry(10, 5),
     new THREE.MeshBasicMaterial({
-      map: hero$1, transparent: true, side: THREE.DoubleSide, depthWrite: false,
+      map: heroTex, transparent: true, side: THREE.DoubleSide, depthWrite: false,
       color: new THREE.Color().setHSL(0.1 - k * 0.006, 1, k === 13 ? 0.7 : 0.35),
     }),
   );
