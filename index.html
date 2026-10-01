@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>伝説の男・LEGENDの年表</title>
+  </head>
+  <body>
+    <canvas id="scene"></canvas>
+    <header>
+      <h1 id="title" data-text="伝説の男・LEGENDの年表">伝説の男・LEGENDの年表</h1>
+      <input id="search" type="search" placeholder="できごとを検索…" aria-label="できごとを検索" />
+      <p class="hint">クリックで詳細 / ← → で前後の日 / スペースで自動再生 / ドラッグで回転</p>
+    </header>
+    <nav id="months" aria-label="月ジャンプ"></nav>
+    <aside id="panel" hidden>
+      <button id="close" aria-label="閉じる">×</button>
+      <h2 id="panel-date"></h2>
+      <ul id="panel-events"></ul>
+    </aside>
+    <div id="tooltip" hidden></div>
+    <div id="play" hidden>▶ 自動再生中</div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
