@@ -9,4 +9,4 @@ export type NostrEvent = {
 };
 
 export type Day = { date: string; events: string[] };
-export type Timeline = { title: string; days: Day[] };
+export type Timeline = { title: string; name?: string; days: Day[] };

@@ -44,6 +44,8 @@ describe("parseTimeline", () => {
       days: [{ date: "2025-10-03", events: ["a", "b"] }, { date: "2026-01-01", events: ["x"] }],
     }));
   it("days 省略は空配列", () => expect(parseTimeline(`title = "T"`)).toEqual({ title: "T", days: [] }));
+  it("name があれば読む", () => expect(parseTimeline(`title = "T"\nname = "N"`)).toEqual({ title: "T", name: "N", days: [] }));
+  it("name が文字列でなければ throw", () => expect(() => parseTimeline(`title = "T"\nname = 1`)).toThrow(Error));
   it.each([
     ["title 無し", `[[days]]\ndate = "2025-10-03"\nevents = ["a"]`],
     ["title が文字列でない", `title = 1`],
@@ -66,11 +68,14 @@ describe("mergeTimelines", () => {
     });
   });
   it("入力無しは空", () => expect(mergeTimelines("M", [])).toEqual({ title: "M", days: [] }));
+  it("name を渡すと付く", () => expect(mergeTimelines("M", [], "N")).toEqual({ title: "M", name: "N", days: [] }));
 });
 
 describe("toToml", () => {
   it("parseTimeline と往復一致", () => {
     const t = parseTimeline(sample);
     expect(parseTimeline(toToml(t))).toEqual(t);
+    const named = { ...t, name: "N" };
+    expect(parseTimeline(toToml(named))).toEqual(named);
   });
 });

@@ -22,8 +22,9 @@ export function groupByDay(events: NostrEvent[]): DayPosts[] {
 const byDate = (a: Day, b: Day) => a.date.localeCompare(b.date);
 
 export function parseTimeline(tomlText: string): Timeline {
-  const { title, days = [] } = parse(tomlText) as { title?: unknown; days?: unknown };
+  const { title, name, days = [] } = parse(tomlText) as { title?: unknown; name?: unknown; days?: unknown };
   if (typeof title !== "string") throw new Error("title must be a string");
+  if (name !== undefined && typeof name !== "string") throw new Error("name must be a string");
   if (!Array.isArray(days)) throw new Error("days must be an array");
   for (const d of days) {
     if (typeof d?.date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(d.date)) throw new Error(`invalid date: ${d?.date}`);
@@ -31,13 +32,13 @@ export function parseTimeline(tomlText: string): Timeline {
     if (!Array.isArray(ev) || ev.length === 0 || !ev.every((s) => typeof s === "string" && s !== ""))
       throw new Error(`invalid events on ${d.date}`);
   }
-  return { title, days: days.map((d: Day) => ({ date: d.date, events: d.events })).sort(byDate) };
+  return { title, ...(name === undefined ? {} : { name }), days: days.map((d: Day) => ({ date: d.date, events: d.events })).sort(byDate) };
 }
 
-export function mergeTimelines(title: string, tomlTexts: string[]): Timeline {
+export function mergeTimelines(title: string, tomlTexts: string[], name?: string): Timeline {
   const days = new Map<string, string[]>();
   for (const d of tomlTexts.flatMap((t) => parseTimeline(t).days)) days.set(d.date, [...(days.get(d.date) ?? []), ...d.events]);
-  return { title, days: [...days].map(([date, events]) => ({ date, events })).sort(byDate) };
+  return { title, ...(name === undefined ? {} : { name }), days: [...days].map(([date, events]) => ({ date, events })).sort(byDate) };
 }
 
 export const toToml = (timeline: Timeline): string => stringify(timeline);
