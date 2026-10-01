@@ -1,3 +1,5 @@
 node_modules
 dist
 tasks/
+data/posts.json
+data/timeline.toml
