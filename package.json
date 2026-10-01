@@ -7,7 +7,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "fetch": "tsx scripts/fetch.ts",
+    "fetch:posts": "tsx scripts/fetch.ts",
     "split": "tsx scripts/split.ts",
     "merge": "tsx scripts/merge.ts"
   },
