@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import raw from "../data/timeline.toml?raw";
-import { helixPosition, matchDay, monthGroups, nodeSize, RADIUS, stepIndex } from "./layout";
+import { helixPosition, matchDay, monthGroups, nearestIndex, nodeSize, RADIUS, stepIndex } from "./layout";
 import { parseTimeline } from "./timeline";
 import "./style.css";
 
@@ -160,13 +160,19 @@ addEventListener("keydown", (e) => {
   }
 });
 
-const ray = new THREE.Raycaster();
-const ndc = new THREE.Vector2();
+const proj = new THREE.Vector3();
+// pick the on-screen node nearest the pointer (generous radius so small orbs and taps still hit)
+function pick(e: PointerEvent) {
+  const pts = pos.map((p) => {
+    proj.copy(p).project(camera);
+    return proj.z > 1 ? null : { x: (proj.x + 1) / 2 * innerWidth, y: (1 - proj.y) / 2 * innerHeight };
+  });
+  return nearestIndex(pts, e.clientX, e.clientY, e.pointerType === "touch" ? 32 : 20);
+}
 let downAt = { x: 0, y: 0 };
 renderer.domElement.addEventListener("pointermove", (e) => {
-  ndc.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
-  ray.setFromCamera(ndc, camera);
-  hover = ray.intersectObject(nodes)[0]?.instanceId ?? -1;
+  if (e.pointerType === "touch") return;
+  hover = pick(e);
   renderer.domElement.style.cursor = hover >= 0 ? "pointer" : "";
   tooltip.hidden = hover < 0;
   if (hover >= 0) {
@@ -178,8 +184,9 @@ renderer.domElement.addEventListener("pointermove", (e) => {
 });
 renderer.domElement.addEventListener("pointerdown", (e) => { downAt = { x: e.clientX, y: e.clientY }; });
 renderer.domElement.addEventListener("pointerup", (e) => {
-  // treat as click only if not dragging
-  if (hover >= 0 && Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) < 6) select(hover);
+  if (Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) >= 6) return; // drag, not a click
+  const i = pick(e);
+  if (i >= 0) { tooltip.hidden = true; select(i); }
 });
 
 // --- particle bursts ---
