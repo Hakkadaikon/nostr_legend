@@ -1,0 +1,27 @@
+{
+  "name": "legend-timeline",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "fetch": "tsx scripts/fetch.ts",
+    "split": "tsx scripts/split.ts",
+    "merge": "tsx scripts/merge.ts"
+  },
+  "dependencies": {
+    "nostr-tools": "^2.25.2",
+    "smol-toml": "^1.9.0",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "@types/three": "^0.186.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3"
+  }
+}
