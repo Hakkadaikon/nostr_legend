@@ -32,3 +32,14 @@ export const stepIndex = (cur: number, delta: number, total: number) =>
   cur < 0 ? 0 : (((cur + delta) % total) + total) % total;
 
 export const nodeSize = (count: number) => 0.2 + Math.min(count, 10) * 0.05;
+
+/** Index of the screen point closest to (x, y) within `radius` px, or -1. `null` = off-screen. */
+export function nearestIndex(pts: ({ x: number; y: number } | null)[], x: number, y: number, radius: number) {
+  let best = -1, bestD = radius;
+  pts.forEach((p, i) => {
+    if (!p) return;
+    const d = Math.hypot(p.x - x, p.y - y);
+    if (d <= bestD) { best = i; bestD = d; }
+  });
+  return best;
+}

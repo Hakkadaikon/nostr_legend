@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { helixPosition, matchDay, monthGroups, monthKey, nodeSize, stepIndex } from "../src/layout";
+import { helixPosition, matchDay, monthGroups, monthKey, nearestIndex, nodeSize, stepIndex } from "../src/layout";
 
 const day = (date: string, events: string[] = ["x"]) => ({ date, events });
 
@@ -73,5 +73,19 @@ describe("density", () => {
       const d = Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z);
       expect(d).toBeGreaterThan(2 * nodeSize(10));
     }
+  });
+});
+
+describe("nearestIndex", () => {
+  const pts = [{ x: 0, y: 0 }, { x: 100, y: 0 }, { x: 103, y: 4 }];
+  it("returns the closest point within the radius", () => {
+    expect(nearestIndex(pts, 98, 1, 24)).toBe(1);
+    expect(nearestIndex(pts, 104, 5, 24)).toBe(2);
+  });
+  it("returns -1 when nothing is within the radius", () => {
+    expect(nearestIndex(pts, 50, 50, 24)).toBe(-1);
+  });
+  it("skips points that are hidden (null)", () => {
+    expect(nearestIndex([null, { x: 30, y: 0 }], 0, 0, 40)).toBe(1);
   });
 });
