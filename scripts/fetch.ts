@@ -1,17 +1,22 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { setTimeout as sleep } from "node:timers/promises";
-import { fetchAll, mergeEvents, npubToHex, queryRelay } from "../src/nostr";
+import { parseFetchArgs } from "../src/cli";
+import { fetchAll, mergeEvents, queryRelay } from "../src/nostr";
 import type { NostrEvent } from "../src/types";
 
-const NPUB = "npub1xxxxxxxx";
-const RELAYS = ["wss://yabu.me", "wss://relay.ditto.pub"];
-
-const pubkey = npubToHex(NPUB);
+let opts: ReturnType<typeof parseFetchArgs>;
+try {
+  opts = parseFetchArgs(process.argv.slice(2));
+} catch (e) {
+  console.error((e as Error).message);
+  process.exit(1);
+}
+const { pubkey, relays } = opts;
 const until = Math.floor(Date.now() / 1000);
 const since = until - 365 * 24 * 3600;
 let all: NostrEvent[] = [];
 
-for (const url of RELAYS) {
+for (const url of relays) {
   try {
     let page = 0;
     const got = await fetchAll({
