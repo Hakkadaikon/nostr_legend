@@ -1,3 +1,4 @@
+import { existsSync, readFileSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { setTimeout as sleep } from "node:timers/promises";
 import { parseFetchArgs } from "../src/cli";
@@ -12,9 +13,11 @@ try {
   process.exit(1);
 }
 const { pubkey, relays } = opts;
+const resume = opts.since !== undefined;
 const until = Math.floor(Date.now() / 1000);
-const since = until - 365 * 24 * 3600;
-let all: NostrEvent[] = [];
+const since = opts.since ?? until - 365 * 24 * 3600;
+// --since のときは既存の posts.json に足す
+let all: NostrEvent[] = resume && existsSync("data/posts.json") ? JSON.parse(readFileSync("data/posts.json", "utf8")).reverse() : [];
 
 for (const url of relays) {
   try {
