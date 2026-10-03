@@ -39,6 +39,14 @@ pnpm run fetch:posts npub1xxxxxxxx
 pnpm run fetch:posts npub1xxxxxxxx --relay wss://relay.example.com --relay wss://relay2.example.com
 ```
 
+続きだけ取りたいときは `--since YYYY-MM-DD`（JST の0時）を付けます。
+その日以降の投稿だけを取得し、既存の `data/posts.json` に追加します。
+取得後は `pnpm split` で月ごとのテキストを作り直し、新しい日の分だけ要約して統合し直します。
+
+```sh
+pnpm run fetch:posts npub1xxxxxxxx --since 2026-10-02
+```
+
 リレーに負荷をかけないよう、取得は次の条件で行います。
 
 - **直列**：リレーを1つずつ順に処理し、同時に開く接続は1本だけにする
