@@ -6,10 +6,16 @@ const HEX = "7e7e9c42a91bfef19fa929e5fda1b72e0ebc1a4c1141673e2794234d86addf4e";
 
 describe("parseFetchArgs", () => {
   it("npub を hex にし、リレー省略時は既定値", () =>
-    expect(parseFetchArgs([NPUB])).toEqual({ pubkey: HEX, relays: DEFAULT_RELAYS }));
+    expect(parseFetchArgs([NPUB])).toEqual({ pubkey: HEX, relays: DEFAULT_RELAYS, since: undefined }));
   it("--relay を複数指定できる", () =>
     expect(parseFetchArgs([NPUB, "--relay", "wss://a.example", "--relay", "wss://b.example"]).relays)
       .toEqual(["wss://a.example", "wss://b.example"]));
+  it("--since を JST 0 時の unix 秒にする", () =>
+    expect(parseFetchArgs([NPUB, "--since", "2026-10-02"]).since).toBe(Date.parse("2026-10-01T15:00:00Z") / 1000));
+  it("--since が日付でなければ throw", () => {
+    expect(() => parseFetchArgs([NPUB, "--since", "yesterday"])).toThrow(/since/);
+    expect(() => parseFetchArgs([NPUB, "--since", "2026-13-45"])).toThrow(/invalid/);
+  });
   it("公開鍵が無ければ使い方を示して throw", () => expect(() => parseFetchArgs([])).toThrow(/usage/i));
   it("npub でなければ throw", () => expect(() => parseFetchArgs(["nsec1xxx"])).toThrow());
   it("wss:// 以外のリレーは throw", () => expect(() => parseFetchArgs([NPUB, "--relay", "http://x"])).toThrow(/wss/));
